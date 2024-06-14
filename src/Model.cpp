@@ -58,7 +58,7 @@ void Mesh::setupMesh(){
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader & shader, glm::vec3 * LightPositions, glm::vec3 * LightColors){
+void Mesh::Draw(Shader & shader,size_t numberOfLights, GLdouble ** lightMatrix){
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
     for(unsigned int i = 0; i < textures.size(); i++)
@@ -77,7 +77,9 @@ void Mesh::Draw(Shader & shader, glm::vec3 * LightPositions, glm::vec3 * LightCo
     }
     glActiveTexture(GL_TEXTURE0);
 
-    
+    shader.setInt("lightNum", numberOfLights);
+    shader.setVec3Array("lightPositions", lightMatrix[0], numberOfLights);
+    shader.setVec3Array("lightColors", lightMatrix[1], numberOfLights);
 
     // draw mesh
     glBindVertexArray(VAO);
@@ -178,9 +180,9 @@ void Model::loadModel(string path){
 
 void Model::Draw(Shader & shader){
     LightManager * lightManager = LightManager::GetInstance();
-    glm::vec3 * lightPositions = lightManager->getLightPositions();
-    glm::vec3 * lightColors = lightManager->getLightColors();
+    lightVector ** lightMatrix = lightManager->getLights();
+    size_t numberOfLights = lightManager->getLightNum();
     for(int i = 0; i < meshes.size(); i++){
-        meshes[i].Draw(shader, lightPositions, lightColors);
+        meshes[i].Draw(shader, numberOfLights, lightMatrix);
     }
 }

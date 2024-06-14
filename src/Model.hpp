@@ -33,7 +33,7 @@ class Mesh {
         Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
 
         //Permite que um modelo seja desenhado com shaders arbitrários
-        void Draw(Shader &shader, glm::vec3 * LightPositions, glm::vec3 * LightColors);
+        void Draw(Shader &shader, size_t numberOfLights, GLdouble ** lightMatrix);
     private:
 
         //Objetos OpenGL

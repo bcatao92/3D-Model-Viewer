@@ -122,6 +122,9 @@ public:
     {
         glUniform1i(glGetUniformLocation(ID, name.c_str()),index);
     }
+    void setVec3Array(const std::string &name, GLdouble * array, size_t size){
+        glUniform3dv(glGetUniformLocation(ID, name.c_str()),size , array);
+    }
 
 private:
     // utility function for checking shader compilation/linking errors.
