@@ -27,7 +27,7 @@ void Mouse::Update(){
     double lastPositionY = PositionY;
     glfwGetCursorPos(window, &PositionX, &PositionY);
     distanceX = PositionX - lastPositionX;
-    distanceY = PositionY - lastPositionY;
+    distanceY = lastPositionY - PositionY;
     getMouseButtonInput();
 }
 

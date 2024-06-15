@@ -1,6 +1,15 @@
 #include "Camera.hpp"
 #include <GLFW/glfw3.h>
+#include <glm/gtc/epsilon.hpp>
 #include <iostream>
+
+double getAngle(double distance, double displacement){
+    double distanceSquared2 = 2*distance*distance;
+    double dxsquared = displacement*displacement;
+    double signal = (displacement >= 0) ? 1.: -1.;
+    double cos = 1-(dxsquared/distanceSquared2);
+    return glm::acos(cos)*signal;
+}
 
 using namespace std;
 
@@ -11,30 +20,27 @@ void Camera::Move(double dx, double dy){
 void Camera::Rotate(double dx, double dy){
     //É necessário determinar a direção para a qual o mouse se moveu para encontrar
     //o eixo sobre o qual rotacionar utilizando produto vetorial
-    glm::vec3 direction = glm::normalize(point - position);
-    glm::vec3 directionDx = direction;
-    //Invertendo a direção de deslocamente, uma vez que deseja-se rotacionar na direção
-    //oposta à qual o mouse se moveu
-    directionDx.x -= dx;
-    directionDx.y -= dy;
-    directionDx = glm::normalize(directionDx);
-    glm::vec3 axis = glm::cross(direction,directionDx);
-    double dotproduct = glm::dot(direction,directionDx);
-    //Encontrando o ângulo de rotação
-    double angle = glm::acos(dotproduct);
-    cout << "Dot product: " << dotproduct << "Angle: " << (float)angle << endl;
-    cout << "Axis: " << "X: " << axis.x << " Y: " << axis.y << " Z: " << axis.z << endl;
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    model = glm::rotate(model, (float)angle/10, axis);
-    position = glm::vec4(position.x,position.y,position.z, 0.0f)*model;
-    up = glm::vec4(up.x,up.y,up.z, 0.0f)*model;
+    double xangle = getAngle(distance ,dx);
+    double yangle = getAngle(distance, dy);
+
+    // cout << "Angle X: " << xangle << endl;
+    // cout << "Angle Y: " << yangle << endl;
+
+    glm::mat4 model = glm::mat4(1.0);
+    glm::mat4 rotationx = glm::rotate(model, (float)xangle, up);
+    position = glm::vec4(position.x,position.y,position.z, 0.0f)*rotationx;
+    
+
+    glm::mat4 rotationy = glm::rotate(model, (float)yangle, right);
+    position = glm::vec4(position.x,position.y,position.z, 0.0f)*rotationy;
+
+    //cout << "Position: " << "X: " << position.x << "Y: " << position.y << "Z: " << position.z << endl;
     // position.x = result.x;
     // position.y = result.y;
     // position.z = result.z;
-    cout << "Position: " <<"X: " <<position.x << " Y: " << position.y << " Z: " << position.z << endl;
-    cout << "Up: " <<"X: " << up.x << " Y: " << up.y << " Z: " << up.z << endl;
-    cout << "Is it still up?!: " << glm::dot(position,up) << endl;
+
+    glm::vec3 front = glm::vec3(position - point);
+    front = glm::normalize(front);
 }
 
 void Camera::processMouseInput(){
@@ -45,14 +51,18 @@ void Camera::processMouseInput(){
     double dy;
     mouse.getButtonsPressed(left, right);
     mouse.getDistance(dx,dy);
-    if(sqrt((dx*dx) + (dy*dy)) >= 0.01){
+    if(dx != 0. && dy != 0){
         if(left)
-            Rotate(dx, dy);
         if(right)
             Move(dx,dy);
     }
 }
 
 void Camera::Update(){
-    processMouseInput();
+    glm::vec3 front = glm::normalize(glm::vec3(point - position));
+    right = glm::normalize(glm::cross(front, worldUp));
+    up = glm::normalize(glm::cross(right,front));
+    cout << "front: " << " X: " << front.x << " Y: " << front.y << " Z: " << front.z << endl;
+    cout << "UP: " << " X: " << up.x << " Y: " << up.y << " Z: " << up.z << endl;
+    Rotate(0., 5.*10./600.);
 }
