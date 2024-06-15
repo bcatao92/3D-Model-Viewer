@@ -3,12 +3,15 @@
 #include <filesystem>
 
 GLuint TextureFromFile(const char* name){
+    std::cout << "Carregando textura: " << name << std::endl;
     GLuint textureID;
 
     //Essa função assume que a textura esteja no diretório do binário
     std::filesystem::path path = std::filesystem::current_path();
     std::string parentPath(path.parent_path().string());
-    std::string texturePath(parentPath + name);
+    std::string texturePath(parentPath + "/" + name);
+
+    std::cout << "Texture path: " << texturePath.c_str() << std::endl;
 
     int height, width, numberOfChannels;
     unsigned char * data = stbi_load(texturePath.c_str(), &width, &height, &numberOfChannels, 0);
@@ -23,6 +26,8 @@ GLuint TextureFromFile(const char* name){
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    stbi_image_free(data);
 
     return textureID;
 }
@@ -94,18 +99,28 @@ void Mesh::Draw(Shader & shader,size_t numberOfLights, GLdouble ** lightMatrix){
 //                         MODEL CLASS                                //
 ////////////////////////////////////////////////////////////////////////
 
-vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
+vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
 {
     vector<Texture> textures;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str;
         mat->GetTexture(type, i, &str);
+        string textureName = str.C_Str();
+
+        bool skip = false;
+
+        if(loaded_textures.count(textureName) == 1){
+            textures.push_back(loaded_textures[textureName]);
+            break;
+        }
+
         Texture texture;
         texture.id = TextureFromFile(str.C_Str());
         texture.type = typeName;
-        //texture.path = str;
+        texture.name = textureName;
         textures.push_back(texture);
+        loaded_textures.insert(make_pair(texture.name, texture));
     }
     return textures;
 }
@@ -116,6 +131,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
     vector<unsigned int> indices;
     vector<Texture> textures;
 
+    std::cout << "Carregando posições, normais e coordenadas de textura" << std::endl;
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Vertex vertex;
@@ -123,19 +139,21 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
         vertex.Position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
         vertex.Normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
         if(mesh->mTextureCoords[0]){
-            vertex.TexCoords = glm::vec2(mesh->mTextureCoords[0][1].x, mesh->mTextureCoords[0][i].y);
+            vertex.TexCoords = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
         }
         else vertex.TexCoords = glm::vec2(.0f, .0f);
         vertices.push_back(vertex);
     }
 
+    std::cout << "Carregando índices dos vértices" << std::endl;
     //Populando vetor de índices do mesh
-    for(int i = 0; i < mesh->mNumFaces; i ++){
-        for(int j = 0; mesh->mFaces[i].mNumIndices; j++){
-            indices.push_back(mesh->mFaces[i].mIndices[j]);
-        }
+    for(unsigned int i = 0; i < mesh->mNumFaces; i ++){
+        aiFace face = mesh->mFaces[i];
+        for(unsigned int j = 0; j < face.mNumIndices; j++)
+            indices.push_back(face.mIndices[j]);
     }
 
+    std::cout << "Carregando materiais" << std::endl;
     if(mesh->mMaterialIndex >= 0)
     {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
@@ -155,6 +173,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
 
 void Model::processNode(aiNode *node, const aiScene *scene){
     //Processar todos os meshes presentes no nó antes de seguir para o próximo
+    std::cout << "Nó processado" << std::endl;
     for(int i = 0; i < node->mNumMeshes; i++){
         //node->mMeshes contém índices para um determinado mesh na scene
         aiMesh * mesh = scene->mMeshes[node->mMeshes[i]];
@@ -178,7 +197,9 @@ void Model::loadModel(string path){
         }
     directory = path.substr(0, path.find_last_of('/'));
 
+    std::cout << "Processando Nós" << std::endl;
     processNode(scene->mRootNode, scene);
+    std::cout << "Nós processados" << std::endl;
 }
 
 void Model::Draw(Shader & shader){

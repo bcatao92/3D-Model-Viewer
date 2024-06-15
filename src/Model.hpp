@@ -1,6 +1,8 @@
+#pragma once
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include <map>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -18,6 +20,7 @@ struct Vertex {
 struct Texture {
     unsigned int id;
     string type;
+    string name;
 };
 
 //Cada mesh representa uma primitiva do modelo
@@ -30,7 +33,14 @@ class Mesh {
 
         //É necessário traduzir o objeto assimp aimesh para remover os elementos inutilizados
         //Para tal, é usado esse construtor na função "processMeshes" do modelo
-        Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
+        Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures){
+            this->vertices = vertices;
+            this->indices = indices;
+            this->textures = textures;
+
+            // now that we have all the required data, set the vertex buffers and its attribute pointers.
+            setupMesh();
+        }
 
         //Permite que um modelo seja desenhado com shaders arbitrários
         void Draw(Shader &shader, size_t numberOfLights, GLdouble ** lightMatrix);
@@ -48,13 +58,16 @@ class Model
 {
     public:
         //Path para carregar o modelo
-        Model(char *path)
+        Model(const char *path)
         {
             loadModel(path);
         }
-        void Draw(Shader &shader);	
+
+        void Draw(Shader &shader);
+
     private:
         // model data
+        map<string, Texture> loaded_textures;
         vector<Mesh> meshes;
         string directory;
 

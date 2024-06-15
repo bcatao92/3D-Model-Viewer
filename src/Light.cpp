@@ -22,10 +22,8 @@ void LightManager::addLight(glm::vec3 position, glm::vec3 color){
     hasChanged = true;
 }
 
-GLdouble ** LightManager::getLights(){
-    return lightMatrix;
-}
-
-size_t LightManager::getLightNum(){
-    return lightNum;
+LightManager::LightManager(){
+    lightMatrix = (GLdouble**)malloc(sizeof(GLdouble*)*2);
+    lightMatrix[0] = (GLdouble*)malloc(sizeof(GLdouble)*MAX_LIGHT_NUM*3);
+    lightMatrix[1] = (GLdouble*)malloc(sizeof(GLdouble)*MAX_LIGHT_NUM*3);
 }

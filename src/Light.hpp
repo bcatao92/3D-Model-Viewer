@@ -1,3 +1,4 @@
+#pragma once
 #include<glm/glm.hpp>
 #include<string>
 #include<vector>
@@ -7,33 +8,7 @@
 
 using namespace std;
 
-struct lightVector{
-    GLdouble x;
-    GLdouble y;
-    GLdouble z;
-    lightVector(glm::vec3 vec){
-        x = vec.x;
-        y = vec.y;
-        z = vec.z;
-    }
-    operator GLdouble*(){
-
-    }
-};
-
 class LightManager{
-    protected:
-    LightManager(){
-        lightMatrix = (GLdouble**)malloc(sizeof(lightVector*)*2);
-        lightMatrix[0] = (GLdouble*)malloc(sizeof(lightVector)*MAX_LIGHT_NUM*3);
-        lightMatrix[1] = (GLdouble*)malloc(sizeof(lightVector)*MAX_LIGHT_NUM*3);
-    }
-
-    static LightManager* manager;
-    size_t lightNum;
-    GLdouble ** lightMatrix;
-    bool hasChanged;
-
     public:
 
     LightManager(LightManager &other) = delete;
@@ -45,9 +20,21 @@ class LightManager{
     void addLight(glm::vec3 position, glm::vec3 color);
 
     //Retorna um array de vec3 que será passado para o shader como um array e uniforms
-    GLdouble ** getLights();
+    GLdouble ** getLights(){
+        return lightMatrix;
+    }
 
     //Number of lights
-    size_t getLightNum();
+    size_t getLightNum(){
+        return lightNum;
+    }
+
+    private:
+    LightManager();
+
+    static LightManager* manager;
+    size_t lightNum;
+    GLdouble ** lightMatrix;
+    bool hasChanged;
 };
 
