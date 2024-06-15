@@ -180,7 +180,7 @@ void Model::loadModel(string path){
 
 void Model::Draw(Shader & shader){
     LightManager * lightManager = LightManager::GetInstance();
-    lightVector ** lightMatrix = lightManager->getLights();
+    GLdouble ** lightMatrix = lightManager->getLights();
     size_t numberOfLights = lightManager->getLightNum();
     for(int i = 0; i < meshes.size(); i++){
         meshes[i].Draw(shader, numberOfLights, lightMatrix);

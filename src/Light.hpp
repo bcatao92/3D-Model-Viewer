@@ -22,14 +22,14 @@ struct lightVector{
 class LightManager{
     protected:
     LightManager(){
-        lightMatrix = (lightVector**)malloc(sizeof(lightVector*)*2);
-        lightMatrix[0] = (lightVector*)malloc(sizeof(lightVector)*128);
-        lightMatrix[1] = (lightVector*)malloc(sizeof(lightVector)*128);
+        lightMatrix = (GLdouble**)malloc(sizeof(lightVector*)*2);
+        lightMatrix[0] = (GLdouble*)malloc(sizeof(lightVector)*128*3);
+        lightMatrix[1] = (GLdouble*)malloc(sizeof(lightVector)*128*3);
     }
 
     static LightManager* manager;
     size_t lightNum;
-    lightVector ** lightMatrix;
+    GLdouble ** lightMatrix;
     bool hasChanged;
 
     public:
@@ -42,10 +42,8 @@ class LightManager{
 
     void addLight(glm::vec3 position, glm::vec3 color);
 
-    //void addLight(Light light);
-
     //Retorna um array de vec3 que será passado para o shader como um array e uniforms
-    lightVector ** getLights();
+    GLdouble ** getLights();
 
     //Number of lights
     size_t getLightNum();
