@@ -3,6 +3,8 @@
 #include<vector>
 #include<glad/glad.h>
 
+#define MAX_LIGHT_NUM 128
+
 using namespace std;
 
 struct lightVector{
@@ -23,8 +25,8 @@ class LightManager{
     protected:
     LightManager(){
         lightMatrix = (GLdouble**)malloc(sizeof(lightVector*)*2);
-        lightMatrix[0] = (GLdouble*)malloc(sizeof(lightVector)*128*3);
-        lightMatrix[1] = (GLdouble*)malloc(sizeof(lightVector)*128*3);
+        lightMatrix[0] = (GLdouble*)malloc(sizeof(lightVector)*MAX_LIGHT_NUM*3);
+        lightMatrix[1] = (GLdouble*)malloc(sizeof(lightVector)*MAX_LIGHT_NUM*3);
     }
 
     static LightManager* manager;

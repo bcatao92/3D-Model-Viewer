@@ -10,7 +10,7 @@ LightManager* LightManager::GetInstance(){
 }
 
 void LightManager::addLight(glm::vec3 position, glm::vec3 color){
-    if(lightNum >= 128)
+    if(lightNum >= MAX_LIGHT_NUM)
         return;
     lightMatrix[0][lightNum*3] = position.x;
     lightMatrix[0][lightNum*3 + 1] = position.y;

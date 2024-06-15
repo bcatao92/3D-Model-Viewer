@@ -77,11 +77,14 @@ void Mesh::Draw(Shader & shader,size_t numberOfLights, GLdouble ** lightMatrix){
     }
     glActiveTexture(GL_TEXTURE0);
 
+    //O shader cria um array de tamanho MAX_LIGHT_NUM (128), e utiliza-se uma variável para iteração
     shader.setInt("lightNum", numberOfLights);
+    //Passando um array para o shader contendo as posições das luzes e suas cores
+                       //Nome da variável  , array       , número de elementos
     shader.setVec3Array("lightPositions", lightMatrix[0], numberOfLights);
     shader.setVec3Array("lightColors", lightMatrix[1], numberOfLights);
 
-    // draw mesh
+    //Chamada para o OpenGL desenhar
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
