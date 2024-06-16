@@ -43,7 +43,7 @@ class Mesh {
         }
 
         //Permite que um modelo seja desenhado com shaders arbitrários
-        void Draw(Shader &shader, size_t numberOfLights, GLdouble ** lightMatrix);
+        void Draw(Shader &shader, size_t numberOfLights, GLfloat ** lightMatrix);
     private:
 
         //Objetos OpenGL

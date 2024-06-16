@@ -122,8 +122,8 @@ public:
     {
         glUniform1i(glGetUniformLocation(ID, name.c_str()),index);
     }
-    void setVec3Array(const std::string &name, GLdouble * array, size_t size){
-        glUniform3dv(glGetUniformLocation(ID, name.c_str()),size , array);
+    void setVec3Array(const std::string &name, GLfloat * array, size_t size){
+        glUniform3fv(glGetUniformLocation(ID, name.c_str()),size , array);
     }
 
 private:

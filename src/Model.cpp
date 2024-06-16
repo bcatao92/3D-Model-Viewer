@@ -19,11 +19,22 @@ GLuint TextureFromFile(const char* name){
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D,textureID);
 
-    //Aceita apenas imagens com 3 ou 4 canais
-    if(numberOfChannels == 3)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    else
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    //Aceita apenas imagens com 1, 3 ou 4 canais
+    GLenum format;
+        if (numberOfChannels == 1)
+            format = GL_RED;
+        else if (numberOfChannels == 3)
+            format = GL_RGB;
+        else if (numberOfChannels == 4)
+            format = GL_RGBA;
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -63,7 +74,7 @@ void Mesh::setupMesh(){
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader & shader,size_t numberOfLights, GLdouble ** lightMatrix){
+void Mesh::Draw(Shader & shader,size_t numberOfLights, GLfloat ** lightMatrix){
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
     for(unsigned int i = 0; i < textures.size(); i++)
@@ -76,18 +87,26 @@ void Mesh::Draw(Shader & shader,size_t numberOfLights, GLdouble ** lightMatrix){
             number = std::to_string(diffuseNr++);
         else if(name == "texture_specular")
             number = std::to_string(specularNr++);
-
-        shader.setInt(("material." + name + number).c_str(), i);
+        
+        shader.setInt((name + number).c_str(), i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
     glActiveTexture(GL_TEXTURE0);
 
+    LightManager * lightManager = LightManager::GetInstance();
+    glm::vec3 ambient_light_vec = lightManager->getAmbientLight();
+    double ambient_light[3];
+    ambient_light[0] = ambient_light_vec.x;
+    ambient_light[1] = ambient_light_vec.y;
+    ambient_light[2] = ambient_light_vec.z;
+
     //O shader cria um array de tamanho MAX_LIGHT_NUM (128), e utiliza-se uma variável para iteração
-    shader.setInt("lightNum", numberOfLights);
+    shader.setInt("light_num", numberOfLights);
     //Passando um array para o shader contendo as posições das luzes e suas cores
                        //Nome da variável  , array       , número de elementos
-    shader.setVec3Array("lightPositions", lightMatrix[0], numberOfLights);
-    shader.setVec3Array("lightColors", lightMatrix[1], numberOfLights);
+    shader.setVec3Array("light_positions", lightMatrix[0], numberOfLights);
+    shader.setVec3Array("light_colors", lightMatrix[1], numberOfLights);
+    shader.setVec3("ambient_light", ambient_light);
 
     //Chamada para o OpenGL desenhar
     glBindVertexArray(VAO);
@@ -112,15 +131,16 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
 
         if(loaded_textures.count(textureName) == 1){
             textures.push_back(loaded_textures[textureName]);
-            break;
+            skip = true;
         }
-
+        if(!skip){
         Texture texture;
-        texture.id = TextureFromFile(str.C_Str());
-        texture.type = typeName;
-        texture.name = textureName;
-        textures.push_back(texture);
-        loaded_textures.insert(make_pair(texture.name, texture));
+            texture.id = TextureFromFile(str.C_Str());
+            texture.type = typeName;
+            texture.name = textureName;
+            textures.push_back(texture);
+            loaded_textures.insert(make_pair(texture.name, texture));
+        }
     }
     return textures;
 }
@@ -131,7 +151,6 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
     vector<unsigned int> indices;
     vector<Texture> textures;
 
-    std::cout << "Carregando posições, normais e coordenadas de textura" << std::endl;
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Vertex vertex;
@@ -145,7 +164,6 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
         vertices.push_back(vertex);
     }
 
-    std::cout << "Carregando índices dos vértices" << std::endl;
     //Populando vetor de índices do mesh
     for(unsigned int i = 0; i < mesh->mNumFaces; i ++){
         aiFace face = mesh->mFaces[i];
@@ -153,7 +171,6 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
             indices.push_back(face.mIndices[j]);
     }
 
-    std::cout << "Carregando materiais" << std::endl;
     if(mesh->mMaterialIndex >= 0)
     {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
@@ -173,7 +190,6 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
 
 void Model::processNode(aiNode *node, const aiScene *scene){
     //Processar todos os meshes presentes no nó antes de seguir para o próximo
-    std::cout << "Nó processado" << std::endl;
     for(int i = 0; i < node->mNumMeshes; i++){
         //node->mMeshes contém índices para um determinado mesh na scene
         aiMesh * mesh = scene->mMeshes[node->mMeshes[i]];
@@ -197,14 +213,12 @@ void Model::loadModel(string path){
         }
     directory = path.substr(0, path.find_last_of('/'));
 
-    std::cout << "Processando Nós" << std::endl;
     processNode(scene->mRootNode, scene);
-    std::cout << "Nós processados" << std::endl;
 }
 
 void Model::Draw(Shader & shader){
     LightManager * lightManager = LightManager::GetInstance();
-    GLdouble ** lightMatrix = lightManager->getLights();
+    GLfloat ** lightMatrix = lightManager->getLights();
     size_t numberOfLights = lightManager->getLightNum();
     for(int i = 0; i < meshes.size(); i++){
         meshes[i].Draw(shader, numberOfLights, lightMatrix);

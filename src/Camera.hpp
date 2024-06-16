@@ -18,7 +18,7 @@ class Camera{
     //Direção para qual a câmera está olhando (o ponto)
     glm::vec3 direction = glm::vec3(position-point);
     //Yaw e pitch
-    double yaw = 0, pitch = 0;
+    double yaw = -90., pitch = 0.;
 
     //Raio entre a câmera e o ponto, usado para rotação
     double distance = glm::length(position-point);

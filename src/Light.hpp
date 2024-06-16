@@ -19,8 +19,10 @@ class LightManager{
 
     void addLight(glm::vec3 position, glm::vec3 color);
 
+    void setAmbientLight(glm::vec3 color);
+
     //Retorna um array de vec3 que será passado para o shader como um array e uniforms
-    GLdouble ** getLights(){
+    GLfloat ** getLights(){
         return lightMatrix;
     }
 
@@ -29,12 +31,17 @@ class LightManager{
         return lightNum;
     }
 
+    //Ambient light
+    glm::vec3 getAmbientLight(){
+        return ambientLight;
+    }
+
     private:
     LightManager();
 
+    glm::vec3 ambientLight = glm::vec3(0.,0.,0.);
     static LightManager* manager;
-    size_t lightNum;
-    GLdouble ** lightMatrix;
-    bool hasChanged;
+    size_t lightNum = 0;
+    GLfloat ** lightMatrix;
 };
 

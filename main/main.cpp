@@ -8,6 +8,7 @@
 #include "../src/Model.hpp"
 #include "../src/Camera.hpp"
 #include "../src/Mouse.hpp"
+#include "../src/Light.hpp"
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -48,9 +49,9 @@ int main(int argc, char **argv)
 
     glEnable(GL_DEPTH_TEST);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
 
     Mouse mouse(window);
 
@@ -67,6 +68,11 @@ int main(int argc, char **argv)
     Camera cameraTeste(mouse);
 
     double distance = 10.0f;
+
+    LightManager * lightManager = LightManager::GetInstance();
+    lightManager->addLight(glm::vec3(0.f,10.f,0.f), glm::vec3(1.f,1.f,1.f));
+    //lightManager->addLight(glm::vec3(-10.f,-10.f,0.f), glm::vec3(1.f,1.f,1.f));
+    lightManager->setAmbientLight(glm::vec3(1.0f,1.0f,1.0f));
 
     while(!glfwWindowShouldClose(window))
     {

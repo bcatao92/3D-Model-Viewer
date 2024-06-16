@@ -16,9 +16,11 @@ using namespace std;
 
 void Camera::Move(double dx, double dy){
     //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
-    point.x += -dx*10.;
-    point.y += -dy*10.;
-    cout << "Point: " << " X: " << point.x << " Y: " << point.y << " Z: " << point.z << endl;
+    //TODO: IMPLEMENTAR ISSO CORRETAMENTE
+    double xscalar = dx*10.;
+    double yscalar = -dy*10.;
+    point += glm::vec3(up.x*yscalar,up.y*yscalar,up.z*yscalar);
+    point += glm::vec3(right.x*xscalar,right.y*xscalar,right.z*xscalar);
 }
 
 void Camera::Rotate(double dx, double dy){
@@ -28,8 +30,8 @@ void Camera::Rotate(double dx, double dy){
     double yangle = getAngle(distance, dy);
 
     //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
-    yaw += xangle*700.;
-    pitch += yangle*700.;
+    yaw += glm::degrees(xangle)*10.;
+    pitch += glm::degrees(yangle)*10.;
 
     // cout << "Angle X: " << xangle << endl;
     // cout << "Angle Y: " << yangle << endl;
