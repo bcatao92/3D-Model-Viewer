@@ -1,8 +1,8 @@
 #pragma once
-#include<glm/glm.hpp>
+#include "../external/glad/include/glad/glad.h"
+#include "../external/glm/glm.hpp"
 #include<string>
 #include<vector>
-#include<glad/glad.h>
 
 #define MAX_LIGHT_NUM 128
 

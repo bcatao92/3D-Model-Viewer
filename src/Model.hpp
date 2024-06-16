@@ -1,11 +1,12 @@
 #pragma once
-#include <glm/glm.hpp>
+#include "../external/glm/gtc/matrix_transform.hpp"
+#include "../external/glm/glm.hpp"
 #include <string>
 #include <vector>
 #include <map>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "../external/assimp/include/assimp/Importer.hpp"
+#include "../external/assimp/include/assimp/scene.h"
+#include "../external/assimp/include/assimp/postprocess.h"
 #include "../external/Shader.hpp"
 #include "../external/stb_image/stb_image.h"
 

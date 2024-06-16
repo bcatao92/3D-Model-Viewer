@@ -1,6 +1,4 @@
 #include "Camera.hpp"
-#include <GLFW/glfw3.h>
-#include <glm/gtc/epsilon.hpp>
 #include <iostream>
 
 //Retorna o ângulo de um triângulo isóceles de lado igual a distance e lado oposto igual a displacement

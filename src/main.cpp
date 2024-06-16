@@ -1,14 +1,14 @@
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
+#include "../external/glad/include/glad/glad.h"
+#include "../external/glm/glm.hpp"
+#include "../external/glfw/include/GLFW/glfw3.h"
 #include <iostream>
 #include <string>
-#include <glm/gtc/matrix_transform.hpp>
+#include "../external/glm/gtc/matrix_transform.hpp"
 #include "../external/Shader.hpp"
-#include "../src/Model.hpp"
-#include "../src/Camera.hpp"
-#include "../src/Mouse.hpp"
-#include "../src/Light.hpp"
+#include "Model.hpp"
+#include "Camera.hpp"
+#include "Mouse.hpp"
+#include "Light.hpp"
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -72,6 +72,7 @@ int main(int argc, char **argv)
     LightManager * lightManager = LightManager::GetInstance();
     lightManager->addLight(glm::vec3(5.f,5.f,5.f), glm::vec3(0.f,0.f,1.f));
     lightManager->addLight(glm::vec3(-5.f,5.f,-5.f), glm::vec3(1.f,0.f,0.f));
+    lightManager->addLight(glm::vec3(0.f,5.f,5.f), glm::vec3(1.f,1.f,1.f));
     lightManager->setAmbientLight(glm::vec3(1.0f,1.0f,1.0f));
 
     while(!glfwWindowShouldClose(window))
