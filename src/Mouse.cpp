@@ -26,12 +26,13 @@ void Mouse::Update(){
     double lastPositionX = PositionX;
     double lastPositionY = PositionY;
     glfwGetCursorPos(window, &PositionX, &PositionY);
-    distanceX = PositionX - lastPositionX;
-    distanceY = lastPositionY - PositionY;
+    distanceX = (PositionX - lastPositionX)/800.;
+    distanceY = (lastPositionY - PositionY)/600.;
     getMouseButtonInput();
+    scrollOffset = 0.f;
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    Mouse::scrollOffset = yoffset;
+    Mouse::scrollOffset = -yoffset;
 }

@@ -3,6 +3,7 @@
 #include <glm/gtc/epsilon.hpp>
 #include <iostream>
 
+//Retorna o ângulo de um triângulo isóceles de lado igual a distance e lado oposto igual a displacement
 double getAngle(double distance, double displacement){
     double distanceSquared2 = 2*distance*distance;
     double dxsquared = displacement*displacement;
@@ -14,7 +15,10 @@ double getAngle(double distance, double displacement){
 using namespace std;
 
 void Camera::Move(double dx, double dy){
-    view = glm::translate(view, glm::vec3(dx,dy, 0.f));
+    //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
+    point.x += -dx*10.;
+    point.y += -dy*10.;
+    cout << "Point: " << " X: " << point.x << " Y: " << point.y << " Z: " << point.z << endl;
 }
 
 void Camera::Rotate(double dx, double dy){
@@ -23,46 +27,55 @@ void Camera::Rotate(double dx, double dy){
     double xangle = getAngle(distance ,dx);
     double yangle = getAngle(distance, dy);
 
+    //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
+    yaw += xangle*700.;
+    pitch += yangle*700.;
+
     // cout << "Angle X: " << xangle << endl;
     // cout << "Angle Y: " << yangle << endl;
 
-    glm::mat4 model = glm::mat4(1.0);
-    glm::mat4 rotationx = glm::rotate(model, (float)xangle, up);
-    position = glm::vec4(position.x,position.y,position.z, 0.0f)*rotationx;
+    // glm::mat4 model = glm::mat4(1.0);
+    // glm::mat4 rotationx = glm::rotate(model, (float)xangle, up);
+    // position = glm::vec4(position.x,position.y,position.z, 0.0f)*rotationx;
     
 
-    glm::mat4 rotationy = glm::rotate(model, (float)yangle, right);
-    position = glm::vec4(position.x,position.y,position.z, 0.0f)*rotationy;
+    // glm::mat4 rotationy = glm::rotate(model, (float)yangle, right);
+    // position = glm::vec4(position.x,position.y,position.z, 0.0f)*rotationy;
 
     //cout << "Position: " << "X: " << position.x << "Y: " << position.y << "Z: " << position.z << endl;
-    // position.x = result.x;
-    // position.y = result.y;
-    // position.z = result.z;
-
-    glm::vec3 front = glm::vec3(position - point);
-    front = glm::normalize(front);
 }
 
 void Camera::processMouseInput(){
     mouse.Update();
-    bool left;
-    bool right;
-    double dx;
-    double dy;
+    bool left, right;
+    double dx, dy;
     mouse.getButtonsPressed(left, right);
     mouse.getDistance(dx,dy);
     if(dx != 0. && dy != 0){
         if(left)
+            Rotate(dx,dy);
         if(right)
             Move(dx,dy);
     }
 }
 
 void Camera::Update(){
-    glm::vec3 front = glm::normalize(glm::vec3(point - position));
-    right = glm::normalize(glm::cross(front, worldUp));
-    up = glm::normalize(glm::cross(right,front));
-    cout << "front: " << " X: " << front.x << " Y: " << front.y << " Z: " << front.z << endl;
-    cout << "UP: " << " X: " << up.x << " Y: " << up.y << " Z: " << up.z << endl;
-    Rotate(0., 5.*10./600.);
+    //Encontrando a direção em que o ponto está olhando
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    //Direção em que a câmera deve olhar para o ponto
+    direction = -glm::normalize(direction);
+    //Escalando a direção pela distância que deve estar do ponto
+    //esssa é a posição da câmera relativa ao ponto
+    glm::vec3 scaledDirection = direction*(float)distance;
+    //Encontrando a posição absoluta da câmera
+    position = glm::vec3(scaledDirection+point);
+    //Quando o modelo rotaciona mais de 90 graus no eixo vertical
+    //esse produto cruzado se inverte, fazendo com que o modelo
+    //seja espelhado com relação ao eixo x.
+    right = glm::normalize(glm::cross(direction, worldUp));
+    up = glm::normalize(glm::cross(right,direction));
+    distance += Mouse::scrollOffset;
+    processMouseInput();
 }
