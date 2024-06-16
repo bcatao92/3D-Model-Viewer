@@ -1,16 +1,14 @@
 #pragma once
-#include "../external/glm/glm/gtc/matrix_transform.hpp"
-#include "../external/glm/glm/glm.hpp"
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/glm.hpp>
+#include <assimp/include/assimp/Importer.hpp>
+#include <assimp/include/assimp/scene.h>
+#include <assimp/include/assimp/postprocess.h>
+#include <Shader.hpp>
+#include <stb_image/stb_image.h>
 #include <string>
 #include <vector>
 #include <map>
-#include "../external/assimp/include/assimp/Importer.hpp"
-#include "../external/assimp/include/assimp/scene.h"
-#include "../external/assimp/include/assimp/postprocess.h"
-#include "../external/Shader.hpp"
-#include "../external/stb_image/stb_image.h"
-
-using namespace std;
 
 struct Vertex {
     glm::vec3 Position;
@@ -20,21 +18,21 @@ struct Vertex {
 
 struct Texture {
     unsigned int id;
-    string type;
-    string name;
+    std::string type;
+    std::string name;
 };
 
 //Cada mesh representa uma primitiva do modelo
 class Mesh {
     public:
         // mesh data
-        vector<Vertex>       vertices;
-        vector<unsigned int> indices;
-        vector<Texture>      textures;
+        std::vector<Vertex>       vertices;
+        std::vector<unsigned int> indices;
+        std::vector<Texture>      textures;
 
         //É necessário traduzir o objeto assimp aimesh para remover os elementos inutilizados
         //Para tal, é usado esse construtor na função "processMeshes" do modelo
-        Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures){
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures){
             this->vertices = vertices;
             this->indices = indices;
             this->textures = textures;
@@ -68,19 +66,21 @@ class Model
 
     private:
         // model data
-        map<string, Texture> loaded_textures;
-        vector<Mesh> meshes;
-        string directory;
+        std::map<std::string, Texture> loaded_textures;
+        std::vector<Mesh> meshes;
+
+        //Caminho para o modelo, será usado para encontrar as texturas posteriormente
+        std::string directory;
 
         //Chamada da função de importar do assimp e das demais funções de processamento
         //e assimp retorna um objeto do tipo scene, que é composto por diversos nós, que devem
         //sem processados em meshes
-        void loadModel(string path);
+        void loadModel(std::string path);
         
         //Função recursiva para processar os nós 
         void processNode(aiNode *node, const aiScene *scene);
 
         Mesh processMesh(aiMesh *mesh, const aiScene *scene);
         
-        vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName);
+        std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
 };

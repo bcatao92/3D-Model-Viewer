@@ -1,15 +1,13 @@
 #include "Model.hpp"
 #include "Light.hpp"
-#include <filesystem>
+#include "utils.hpp"
 
-GLuint TextureFromFile(const char* name){
+GLuint TextureFromFile(const char* name, std::string directory){
     std::cout << "Carregando textura: " << name << std::endl;
     GLuint textureID;
 
-    //Essa função assume que a textura esteja no diretório do binário
-    std::filesystem::path path = std::filesystem::current_path();
-    std::string parentPath(path.parent_path().string());
-    std::string texturePath(parentPath + "/" + name);
+    //Essa função assume que a textura esteja no diretório do código fonte
+    std::string texturePath (directory + name);
 
     std::cout << "Texture path: " << texturePath.c_str() << std::endl;
 
@@ -81,8 +79,8 @@ void Mesh::Draw(Shader & shader,size_t numberOfLights, GLfloat ** lightMatrix){
     {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
         // retrieve texture number (the N in diffuse_textureN)
-        string number;
-        string name = textures[i].type;
+        std::string number;
+        std::string name = textures[i].type;
         if(name == "texture_diffuse")
             number = std::to_string(diffuseNr++);
         else if(name == "texture_specular")
@@ -114,14 +112,14 @@ void Mesh::Draw(Shader & shader,size_t numberOfLights, GLfloat ** lightMatrix){
 //                         MODEL CLASS                                //
 ////////////////////////////////////////////////////////////////////////
 
-vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
-    vector<Texture> textures;
+    std::vector<Texture> textures;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str;
         mat->GetTexture(type, i, &str);
-        string textureName = str.C_Str();
+        std::string textureName = str.C_Str();
 
         bool skip = false;
 
@@ -131,7 +129,7 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
         }
         if(!skip){
         Texture texture;
-            texture.id = TextureFromFile(str.C_Str());
+            texture.id = TextureFromFile(str.C_Str(), directory);
             texture.type = typeName;
             texture.name = textureName;
             textures.push_back(texture);
@@ -143,9 +141,9 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
 
 
 Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
-    vector<Vertex> vertices;
-    vector<unsigned int> indices;
-    vector<Texture> textures;
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+    std::vector<Texture> textures;
 
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -171,13 +169,13 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
     {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
         //O tipo da aiTexture da textura é enviado para a função para acessar o array daquele tipo de textura
-        vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 
         //Coloca todos os elementos em diffuse maps no vetor de texturas
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
         //Repetindo para texturas speculars
-        vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }  
 
@@ -198,16 +196,16 @@ void Model::processNode(aiNode *node, const aiScene *scene){
     }
 }
 
-void Model::loadModel(string path){
+void Model::loadModel(std::string path){
     Assimp::Importer importer;
     const aiScene * scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenNormals);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
         {
-            cout << "ERROR::ASSIMP::" << importer.GetErrorString() << endl;
+            std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
             return;
         }
-    directory = path.substr(0, path.find_last_of('/'));
+    directory = getParentFolder(path);
 
     processNode(scene->mRootNode, scene);
 }

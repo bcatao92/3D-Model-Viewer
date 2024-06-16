@@ -1,14 +1,15 @@
-#include "../external/glad/include/glad/glad.h"
-#include "../external/glm/glm/glm.hpp"
-#include "../external/glfw/include/GLFW/glfw3.h"
+#include <glad/include/glad/glad.h>
+#include <glm/glm/glm.hpp>
+#include <glfw/include/GLFW/glfw3.h>
 #include <iostream>
 #include <string>
-#include "../external/glm/glm/gtc/matrix_transform.hpp"
-#include "../external/Shader.hpp"
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <Shader.hpp>
 #include "Model.hpp"
 #include "Camera.hpp"
 #include "Mouse.hpp"
 #include "Light.hpp"
+#include "utils.hpp"
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -57,7 +58,8 @@ int main(int argc, char **argv)
 
     std::cout << "Carregando modelo" << std::endl;
 
-    Model model("model/backpack.obj");
+    std::string path = getPath("model/backpack.obj");
+    Model model(path.c_str());
 
     std::cout << "Modelo Carregado" << std::endl;
 

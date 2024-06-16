@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-add_compile_options(-g -rdynamic -Werror)
-
 set (CMAKE_CXX_STANDARD 17)
 
 file(GLOB ROOT_SOURCE src/*.cpp)
@@ -18,6 +16,10 @@ set(SOURCES ${ROOT_SOURCE} ${ROOT_HEADER} ${GLAD_SOURCE} ${GLAD_INCLUDE} ${STB_I
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+if(CMAKE_SYSTEM MATCHES Windows)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -D_WIN32)
+endif()
+
 set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF)
 set(ASSIMP_INSTALL OFF)
@@ -30,7 +32,7 @@ add_subdirectory(external/glm)
 
 find_package(OpenGL REQUIRED)
 
-target_include_directories(${PROJECT_NAME} PRIVATE "external")
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/external")
 
 target_link_libraries(${PROJECT_NAME} glfw glm assimp OpenGL::GL ${CMAKE_DL_LIBS})
 

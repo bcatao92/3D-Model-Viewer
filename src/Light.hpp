@@ -1,12 +1,10 @@
 #pragma once
-#include "../external/glad/include/glad/glad.h"
-#include "../external/glm/glm/glm.hpp"
-#include<string>
-#include<vector>
+#include <glad/include/glad/glad.h>
+#include <glm/glm/glm.hpp>
+#include <string>
+#include <vector>
 
 #define MAX_LIGHT_NUM 128
-
-using namespace std;
 
 class LightManager{
     public:

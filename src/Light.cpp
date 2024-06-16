@@ -3,7 +3,6 @@
 
 LightManager* LightManager::manager = nullptr;
 
-using namespace std;
 
 LightManager* LightManager::GetInstance(){
     if(manager == nullptr){

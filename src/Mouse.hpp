@@ -1,5 +1,5 @@
 #pragma once
-#include "../external/glfw/include/GLFW/glfw3.h"
+#include <glfw/include/GLFW/glfw3.h>
 
 //TODO: TRANSFORMAR MOUSE EM SINGLETON
 //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
