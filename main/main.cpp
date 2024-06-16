@@ -70,8 +70,8 @@ int main(int argc, char **argv)
     double distance = 10.0f;
 
     LightManager * lightManager = LightManager::GetInstance();
-    lightManager->addLight(glm::vec3(10.f,5.f,5.f), glm::vec3(0.f,0.f,1.f));
-    lightManager->addLight(glm::vec3(-10.f,5.f,-5.f), glm::vec3(1.f,0.f,0.f));
+    lightManager->addLight(glm::vec3(5.f,5.f,5.f), glm::vec3(0.f,0.f,1.f));
+    lightManager->addLight(glm::vec3(-5.f,5.f,-5.f), glm::vec3(1.f,0.f,0.f));
     lightManager->setAmbientLight(glm::vec3(1.0f,1.0f,1.0f));
 
     while(!glfwWindowShouldClose(window))
