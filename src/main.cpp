@@ -13,8 +13,7 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);  
-
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 int main(int argc, char **argv)
 {
@@ -28,7 +27,7 @@ int main(int argc, char **argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "ModelViewer", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(800, 600, "ModelViewer", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -43,21 +42,21 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glViewport(0, 0, 800, 600);
 
     glEnable(GL_DEPTH_TEST);
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    //stbi_set_flip_vertically_on_load(true);
+    // stbi_set_flip_vertically_on_load(true);
 
     Mouse mouse(window);
 
     std::cout << "Carregando modelo" << std::endl;
 
-    Model model("model/backpack.obj");
+    Model model("model\\backpack.obj");
 
     std::cout << "Modelo Carregado" << std::endl;
 
@@ -69,13 +68,13 @@ int main(int argc, char **argv)
 
     double distance = 10.0f;
 
-    LightManager * lightManager = LightManager::GetInstance();
-    lightManager->addLight(glm::vec3(5.f,5.f,5.f), glm::vec3(0.f,0.f,1.f));
-    lightManager->addLight(glm::vec3(-5.f,5.f,-5.f), glm::vec3(1.f,0.f,0.f));
-    lightManager->addLight(glm::vec3(0.f,5.f,5.f), glm::vec3(1.f,1.f,1.f));
-    lightManager->setAmbientLight(glm::vec3(1.0f,1.0f,1.0f));
+    LightManager *lightManager = LightManager::GetInstance();
+    lightManager->addLight(glm::vec3(5.f, 5.f, 5.f), glm::vec3(0.f, 0.f, 1.f));
+    lightManager->addLight(glm::vec3(-5.f, 5.f, -5.f), glm::vec3(1.f, 0.f, 0.f));
+    lightManager->addLight(glm::vec3(0.f, 5.f, 5.f), glm::vec3(1.f, 1.f, 1.f));
+    lightManager->setAmbientLight(glm::vec3(1.0f, 1.0f, 1.0f));
 
-    while(!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window))
     {
         cameraTeste.Update();
         double time = glfwGetTime();
@@ -94,7 +93,7 @@ int main(int argc, char **argv)
         // render the loaded model
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));     // it's a bit too big for our scene, so scale it down
         ModelShader.setMat4("model", modelMatrix);
 
         glm::vec3 position = cameraTeste.getPosition();
@@ -104,15 +103,14 @@ int main(int argc, char **argv)
         model.Draw(ModelShader);
 
         glfwSwapBuffers(window);
-        glfwPollEvents();    
+        glfwPollEvents();
     }
 
     glfwTerminate();
     return 0;
-
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}  
+}

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-add_compile_options(-g -rdynamic -Werror)
+
 
 set (CMAKE_CXX_STANDARD 17)
 
@@ -30,7 +30,7 @@ add_subdirectory(external/glm)
 
 find_package(OpenGL REQUIRED)
 
-target_include_directories(${PROJECT_NAME} PRIVATE "external")
+target_include_directories(${PROJECT_NAME} PRIVATE "external" "external/glad/include")
 
 target_link_libraries(${PROJECT_NAME} glfw glm assimp OpenGL::GL ${CMAKE_DL_LIBS})
 
