@@ -94,11 +94,7 @@ void Mesh::Draw(Shader & shader,size_t numberOfLights, GLfloat ** lightMatrix){
     glActiveTexture(GL_TEXTURE0);
 
     LightManager * lightManager = LightManager::GetInstance();
-    glm::vec3 ambient_light_vec = lightManager->getAmbientLight();
-    double ambient_light[3];
-    ambient_light[0] = ambient_light_vec.x;
-    ambient_light[1] = ambient_light_vec.y;
-    ambient_light[2] = ambient_light_vec.z;
+    glm::vec3 ambient_light = lightManager->getAmbientLight();
 
     //O shader cria um array de tamanho MAX_LIGHT_NUM (128), e utiliza-se uma variável para iteração
     shader.setInt("light_num", numberOfLights);

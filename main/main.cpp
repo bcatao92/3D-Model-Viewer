@@ -70,8 +70,8 @@ int main(int argc, char **argv)
     double distance = 10.0f;
 
     LightManager * lightManager = LightManager::GetInstance();
-    lightManager->addLight(glm::vec3(0.f,10.f,0.f), glm::vec3(1.f,1.f,1.f));
-    //lightManager->addLight(glm::vec3(-10.f,-10.f,0.f), glm::vec3(1.f,1.f,1.f));
+    lightManager->addLight(glm::vec3(10.f,5.f,5.f), glm::vec3(0.f,0.f,1.f));
+    lightManager->addLight(glm::vec3(-10.f,5.f,-5.f), glm::vec3(1.f,0.f,0.f));
     lightManager->setAmbientLight(glm::vec3(1.0f,1.0f,1.0f));
 
     while(!glfwWindowShouldClose(window))
@@ -95,6 +95,10 @@ int main(int argc, char **argv)
         modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
         ModelShader.setMat4("model", modelMatrix);
+
+        glm::vec3 position = cameraTeste.getPosition();
+
+        ModelShader.setVec3("acameraPos", position);
 
         model.Draw(ModelShader);
 

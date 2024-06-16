@@ -58,5 +58,9 @@ class Camera{
     glm::mat4 getViewMat(){
         return glm::lookAt(position, point, up);
     }
+
+    glm::vec3 getPosition(){
+        return position;
+    }
     
 };
