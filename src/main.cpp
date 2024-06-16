@@ -1,9 +1,9 @@
 #include "../external/glad/include/glad/glad.h"
-#include "../external/glm/glm.hpp"
+#include "../external/glm/glm/glm.hpp"
 #include "../external/glfw/include/GLFW/glfw3.h"
 #include <iostream>
 #include <string>
-#include "../external/glm/gtc/matrix_transform.hpp"
+#include "../external/glm/glm/gtc/matrix_transform.hpp"
 #include "../external/Shader.hpp"
 #include "Model.hpp"
 #include "Camera.hpp"

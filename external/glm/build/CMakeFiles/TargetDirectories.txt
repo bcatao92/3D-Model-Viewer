@@ -1,2 +1,0 @@
-C:/Users/cesar/OneDrive/Documentos/Include/glm/build/CMakeFiles/edit_cache.dir
-C:/Users/cesar/OneDrive/Documentos/Include/glm/build/CMakeFiles/rebuild_cache.dir
