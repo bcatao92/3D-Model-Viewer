@@ -16,8 +16,12 @@ set(SOURCES ${ROOT_SOURCE} ${ROOT_HEADER} ${GLAD_SOURCE} ${GLAD_INCLUDE} ${STB_I
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DGLFW_INCLUDE_NONE)    
+
 if(CMAKE_SYSTEM MATCHES Windows)
     target_compile_definitions(${PROJECT_NAME} PRIVATE -D_WIN32)
+    message("windows")
 endif()
 
 set(ASSIMP_BUILD_TESTS OFF)

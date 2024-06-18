@@ -27,10 +27,10 @@ class Camera{
     glm::mat4 view;
 
     //A câmera precisa do input do mouse para se mover
-    Mouse mouse;
+    Mouse * mouse;
 
     //Capta o input do mouse
-    void processMouseInput();
+    void processMouseInput(double deltaTime);
 
     void Rotate(double dx, double dy);
 
@@ -39,7 +39,7 @@ class Camera{
     public:
 
     //Criando a Câmera com valores padrões e atribuindo o mouse
-    Camera(Mouse mouse): mouse(mouse){
+    Camera(Mouse* mouse){
         //Olhando em direção ao ponto (na verdade esse vetor aponta o oposto da direção em que a câmera está olhando)
         direction = glm::normalize(position - point);
         //Encontrando a direção direita (x positivo) da câmera utilizando seu o vetor apontando para cima
@@ -48,12 +48,14 @@ class Camera{
         up = glm::normalize(glm::cross(direction, right));
         //Inicializa a câmera na posição inicial, olhando para a origem
         view = glm::lookAt(position, point, up);
+
+        this->mouse = mouse;
     }
 
     //Função que irá mover a câmera ao longo da execução do programa
     //Será chamado or uma super classe responsável por atualizar, por frame
     //Todos os objetos do sistema
-    void Update();
+    void Update(double deltaTime);
 
     glm::mat4 getViewMat(){
         return glm::lookAt(position, point, up);

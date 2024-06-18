@@ -1,16 +1,6 @@
 #include "Light.hpp"
 #include <iostream>
 
-LightManager* LightManager::manager = nullptr;
-
-
-LightManager* LightManager::GetInstance(){
-    if(manager == nullptr){
-        manager = new LightManager();
-    }
-    return manager;
-}
-
 void LightManager::setAmbientLight(glm::vec3 color){
     ambientLight = color;
 }

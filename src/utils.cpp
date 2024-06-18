@@ -6,8 +6,7 @@
         std::string nameCopy(name);
         std::replace(nameCopy.begin(), nameCopy.end(), '/', '\\');
         std::filesystem::path path = std::filesystem::current_path();
-        std::string parentPath(path.parent_path().string());
-        std::string texturePath(parentPath + "\\" + nameCopy);
+        std::string texturePath(path.string() + "\\" + nameCopy);
         
         return texturePath;
     }
@@ -18,21 +17,20 @@
         return returnPath;
     }
 
-#elif
+#else
     std::string getPath(std::string name){
         //Evita que a string original seja alterada
         std::string nameCopy(name);
         std::replace(nameCopy.begin(), nameCopy.end(), '\\', '/');
         std::filesystem::path path = std::filesystem::current_path();
-        std::string parentPath(path.parent_path().string());
-        std::string texturePath(parentPath + "/" + nameCopy);
+        std::string texturePath(path.string() + "/" + nameCopy);
 
         return texturePath;
     }
 
     std::string getParentFolder(std::string path){
         std::string returnPath = path.substr(0, path.find_last_of('/'));
-        returnPath += '\\';
+        returnPath += '/';
         return returnPath;
     }
 #endif

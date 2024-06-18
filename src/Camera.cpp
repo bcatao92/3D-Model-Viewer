@@ -13,10 +13,8 @@ double getAngle(double distance, double displacement){
 using namespace std;
 
 void Camera::Move(double dx, double dy){
-    //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
-    //TODO: IMPLEMENTAR ISSO CORRETAMENTE
-    double xscalar = dx*10.;
-    double yscalar = -dy*10.;
+    double xscalar = dx*mouse->sensitivity;
+    double yscalar = -dy*mouse->sensitivity;
     point += glm::vec3(up.x*yscalar,up.y*yscalar,up.z*yscalar);
     point += glm::vec3(right.x*xscalar,right.y*xscalar,right.z*xscalar);
 }
@@ -27,30 +25,17 @@ void Camera::Rotate(double dx, double dy){
     double xangle = getAngle(distance ,dx);
     double yangle = getAngle(distance, dy);
 
-    //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
-    yaw += glm::degrees(xangle)*10.;
-    pitch += glm::degrees(yangle)*10.;
-
-    // cout << "Angle X: " << xangle << endl;
-    // cout << "Angle Y: " << yangle << endl;
-
-    // glm::mat4 model = glm::mat4(1.0);
-    // glm::mat4 rotationx = glm::rotate(model, (float)xangle, up);
-    // position = glm::vec4(position.x,position.y,position.z, 0.0f)*rotationx;
-    
-
-    // glm::mat4 rotationy = glm::rotate(model, (float)yangle, right);
-    // position = glm::vec4(position.x,position.y,position.z, 0.0f)*rotationy;
-
-    //cout << "Position: " << "X: " << position.x << "Y: " << position.y << "Z: " << position.z << endl;
+    yaw += glm::degrees(xangle)*mouse->sensitivity;
+    pitch += glm::degrees(yangle)*mouse->sensitivity;
 }
 
-void Camera::processMouseInput(){
-    mouse.Update();
+void Camera::processMouseInput(double deltaTime){
     bool left, right;
     double dx, dy;
-    mouse.getButtonsPressed(left, right);
-    mouse.getDistance(dx,dy);
+    mouse->getButtonsPressed(left, right);
+    mouse->getDistance(dx,dy);
+    dx *= deltaTime;
+    dy *= deltaTime;
     if(dx != 0. && dy != 0){
         if(left)
             Rotate(dx,dy);
@@ -59,7 +44,7 @@ void Camera::processMouseInput(){
     }
 }
 
-void Camera::Update(){
+void Camera::Update(double deltaTime){
     //Encontrando a direção em que o ponto está olhando
     direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     direction.y = sin(glm::radians(pitch));
@@ -76,6 +61,6 @@ void Camera::Update(){
     //seja espelhado com relação ao eixo x.
     right = glm::normalize(glm::cross(direction, worldUp));
     up = glm::normalize(glm::cross(right,direction));
-    distance += Mouse::scrollOffset;
-    processMouseInput();
+    distance += Mouse::scrollOffset*deltaTime*50.;
+    processMouseInput(deltaTime);
 }

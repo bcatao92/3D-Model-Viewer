@@ -3,13 +3,10 @@
 #include "utils.hpp"
 
 GLuint TextureFromFile(const char* name, std::string directory){
-    std::cout << "Carregando textura: " << name << std::endl;
     GLuint textureID;
 
     //Essa função assume que a textura esteja no diretório do código fonte
     std::string texturePath (directory + name);
-
-    std::cout << "Texture path: " << texturePath.c_str() << std::endl;
 
     int height, width, numberOfChannels;
     unsigned char * data = stbi_load(texturePath.c_str(), &width, &height, &numberOfChannels, 0);
@@ -72,9 +69,11 @@ void Mesh::setupMesh(){
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader & shader,size_t numberOfLights, GLfloat ** lightMatrix){
+void Mesh::Draw(Shader * shader){
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
+    shader->use();
+    shader->setFloat("teste", 0.4f);
     for(unsigned int i = 0; i < textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
@@ -86,21 +85,10 @@ void Mesh::Draw(Shader & shader,size_t numberOfLights, GLfloat ** lightMatrix){
         else if(name == "texture_specular")
             number = std::to_string(specularNr++);
         
-        shader.setInt((name + number).c_str(), i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
+        shader->setInt((name + number).c_str(), i);
     }
     glActiveTexture(GL_TEXTURE0);
-
-    LightManager * lightManager = LightManager::GetInstance();
-    glm::vec3 ambient_light = lightManager->getAmbientLight();
-
-    //O shader cria um array de tamanho MAX_LIGHT_NUM (128), e utiliza-se uma variável para iteração
-    shader.setInt("light_num", numberOfLights);
-    //Passando um array para o shader contendo as posições das luzes e suas cores
-                       //Nome da variável  , array       , número de elementos
-    shader.setVec3Array("light_positions", lightMatrix[0], numberOfLights);
-    shader.setVec3Array("light_colors", lightMatrix[1], numberOfLights);
-    shader.setVec3("ambient_light", ambient_light);
 
     //Chamada para o OpenGL desenhar
     glBindVertexArray(VAO);
@@ -170,7 +158,6 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
         //O tipo da aiTexture da textura é enviado para a função para acessar o array daquele tipo de textura
         std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-
         //Coloca todos os elementos em diffuse maps no vetor de texturas
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
@@ -210,11 +197,8 @@ void Model::loadModel(std::string path){
     processNode(scene->mRootNode, scene);
 }
 
-void Model::Draw(Shader & shader){
-    LightManager * lightManager = LightManager::GetInstance();
-    GLfloat ** lightMatrix = lightManager->getLights();
-    size_t numberOfLights = lightManager->getLightNum();
+void Model::Draw(){
     for(int i = 0; i < meshes.size(); i++){
-        meshes[i].Draw(shader, numberOfLights, lightMatrix);
+        meshes[i].Draw(shader);
     }
 }

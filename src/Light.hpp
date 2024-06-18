@@ -9,11 +9,7 @@
 class LightManager{
     public:
 
-    LightManager(LightManager &other) = delete;
-
-    void operator = (const LightManager &) = delete;
-
-    static LightManager * GetInstance();
+    LightManager();
 
     void addLight(glm::vec3 position, glm::vec3 color);
 
@@ -35,10 +31,8 @@ class LightManager{
     }
 
     private:
-    LightManager();
 
     glm::vec3 ambientLight = glm::vec3(0.,0.,0.);
-    static LightManager* manager;
     size_t lightNum = 0;
     GLfloat ** lightMatrix;
 };

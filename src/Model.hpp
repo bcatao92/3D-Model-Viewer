@@ -42,7 +42,9 @@ class Mesh {
         }
 
         //Permite que um modelo seja desenhado com shaders arbitrários
-        void Draw(Shader &shader, size_t numberOfLights, GLfloat ** lightMatrix);
+        void Draw(Shader *shader);
+
+
     private:
 
         //Objetos OpenGL
@@ -56,18 +58,33 @@ class Mesh {
 class Model 
 {
     public:
+        glm::vec3 position = glm::vec3(0.,0.,0.);
+        Shader * shader;
+
         //Path para carregar o modelo
-        Model(const char *path)
+        Model(const char *path, Shader *shader) : shader(shader)
         {
             loadModel(path);
         }
 
-        void Draw(Shader &shader);
+        void Draw();
+
+        //Apenas escala 
+        void Scale(double scaleFactor){
+            scale *= scaleFactor;
+        }
+
+        glm::vec3 getScale(){
+            return glm::vec3(scale,scale,scale);
+        }
 
     private:
         // model data
         std::map<std::string, Texture> loaded_textures;
         std::vector<Mesh> meshes;
+
+        //Atributos do modelo
+        double scale = 1.;
 
         //Caminho para o modelo, será usado para encontrar as texturas posteriormente
         std::string directory;

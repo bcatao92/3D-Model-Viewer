@@ -38,20 +38,20 @@ float getSpecularCosine(vec3 lightPos){
     return cos;
 }
 
-vec4 calculateLighting(vec4 materialColor){
+vec4 calculateLighting(vec4 diffuseColor, vec4 specularColor){
     //Ambient Lighting
-    vec4 ambientLighting = materialColor*vec4(ambient_light,1.0)*ambientStrength;
+    vec4 ambientLighting = diffuseColor*vec4(ambient_light,1.0)*ambientStrength;
     vec4 result = ambientLighting;
     for(int i = 0; i < light_num; i++){
         vec3 lightPosition = light_positions[i];
         vec4 lightColor = vec4(light_colors[i], 1.0);
         //Difuse reflexion
         float diffuseCosine = getDifuseCosine(lightPosition);
-        vec4 diffuse = atenuationFactor*diffuseStrength*diffuseCosine*lightColor*materialColor;
+        vec4 diffuse = atenuationFactor*diffuseStrength*diffuseCosine*lightColor*diffuseColor;
         //Difuse reflexion
         float specularCosine = getSpecularCosine(lightPosition);
         specularCosine = pow(specularCosine, specularFactor);
-        vec4 specular = atenuationFactor*specularStrength*specularCosine*lightColor*vec4(1.0);
+        vec4 specular = atenuationFactor*specularStrength*specularCosine*lightColor*specularColor;
         result += diffuse+specular;
     }
     return result;
@@ -60,8 +60,9 @@ vec4 calculateLighting(vec4 materialColor){
 
 void main()
 {    
-    vec4 material = texture(texture_diffuse1, TexCoords);
-    FragColor = calculateLighting(material);
+    vec4 diffuseMaterial = texture(texture_diffuse1, TexCoords);
+    vec4 specularMaterial = texture(texture_specular1, TexCoords);
+    FragColor = calculateLighting(diffuseMaterial, specularMaterial);
     //FragColor = FragColor*vec4(light_colors[0], 1.f);
     //FragColor = FragColor*vec4(light_colors[1],1.0f);
 }

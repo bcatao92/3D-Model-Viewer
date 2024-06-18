@@ -1,11 +1,9 @@
 #pragma once
 #include <glfw/include/GLFW/glfw3.h>
 
-//TODO: TRANSFORMAR MOUSE EM SINGLETON
 //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
 class Mouse{
     private:
-
     double PositionX, PositionY;
     double distanceX, distanceY;
     bool buttons[2];
@@ -16,6 +14,7 @@ class Mouse{
 
     public:
 
+    double sensitivity = 500.; 
     //Funções de callback não funcionam muito bem com POO
     static double scrollOffset;
 
