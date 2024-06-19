@@ -43,6 +43,8 @@ Scene::Scene(const char * title, int screenWidth, int screenHeight){
 
     mouse = new Mouse(window);
     camera = new Camera(mouse);
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Scene::addBackground(string folder){
@@ -95,7 +97,6 @@ void Scene::Draw(){
 
         model.Draw();
     }
-
 
     if(skybox){
         mat4 skyboxView = glm::mat4(glm::mat3(view));
