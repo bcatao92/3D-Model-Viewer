@@ -42,8 +42,6 @@ Scene::Scene(const char * title, int screenWidth, int screenHeight){
     
     glViewport(0, 0, screenWidth, screenHeight);
 
-    glEnable(GL_DEPTH_TEST);
-
     mouse = new Mouse(window);
     camera = new Camera(mouse);
 }
@@ -60,6 +58,12 @@ void Scene::Update(){
 void Scene::Draw(){
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glDisable(GL_DEPTH_TEST);
+
+    //DESENHAR BACKGROUND AQUI
+
+    glEnable(GL_DEPTH_TEST);
 
     for(Model model : models){
         Shader * modelShader = model.shader;

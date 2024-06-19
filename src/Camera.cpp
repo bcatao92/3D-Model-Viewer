@@ -2,6 +2,7 @@
 #include <iostream>
 
 //Retorna o ângulo de um triângulo isóceles de lado igual a distance e lado oposto igual a displacement
+//EM RADIANOS
 double getAngle(double distance, double displacement){
     double distanceSquared2 = 2*distance*distance;
     double dxsquared = displacement*displacement;
@@ -13,8 +14,8 @@ double getAngle(double distance, double displacement){
 using namespace std;
 
 void Camera::Move(double dx, double dy){
-    double xscalar = dx*mouse->sensitivity;
-    double yscalar = -dy*mouse->sensitivity;
+    double xscalar = dx;
+    double yscalar = -dy;
     point += glm::vec3(up.x*yscalar,up.y*yscalar,up.z*yscalar);
     point += glm::vec3(right.x*xscalar,right.y*xscalar,right.z*xscalar);
 }
@@ -25,8 +26,8 @@ void Camera::Rotate(double dx, double dy){
     double xangle = getAngle(distance ,dx);
     double yangle = getAngle(distance, dy);
 
-    yaw += glm::degrees(xangle)*mouse->sensitivity;
-    pitch += glm::degrees(yangle)*mouse->sensitivity;
+    yaw += glm::degrees(xangle);
+    pitch += glm::degrees(yangle);
 }
 
 void Camera::processMouseInput(double deltaTime){
@@ -34,8 +35,8 @@ void Camera::processMouseInput(double deltaTime){
     double dx, dy;
     mouse->getButtonsPressed(left, right);
     mouse->getDistance(dx,dy);
-    dx *= deltaTime;
-    dy *= deltaTime;
+    dx *= deltaTime*mouse->sensitivity;
+    dy *= deltaTime*mouse->sensitivity;
     if(dx != 0. && dy != 0){
         if(left)
             Rotate(dx,dy);

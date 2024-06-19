@@ -14,7 +14,7 @@ class Mouse{
 
     public:
 
-    double sensitivity = 500.; 
+    double sensitivity = 5000.; 
     //Funções de callback não funcionam muito bem com POO
     static double scrollOffset;
 

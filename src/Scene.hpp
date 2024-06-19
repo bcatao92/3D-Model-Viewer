@@ -33,7 +33,7 @@ class Scene{
 
     //void setMouseCallback(void * (GLFWwindow * window, int button, int action, int mods));
 
-    void setSensitivity(int sensitivity){
+    void setSensitivity(double sensitivity){
         mouse->sensitivity = sensitivity;
     }
 
