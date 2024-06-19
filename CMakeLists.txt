@@ -28,9 +28,9 @@ set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF)
 set(ASSIMP_INSTALL OFF)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/assimp)
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/glfw)
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/glm)
+add_subdirectory(external/assimp)
+add_subdirectory(external/glfw)
+add_subdirectory(external/glm)
 
 add_subdirectory(examples)
 
