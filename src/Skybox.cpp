@@ -79,7 +79,6 @@ GLuint Skybox::loadCubeMap(std::string folder){
                 else if (nrChannels == 4)
                     format = GL_RGBA;
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-            std::cout << "SUCCESS" << std::endl;
         }
         else
             std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;

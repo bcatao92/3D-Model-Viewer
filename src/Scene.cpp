@@ -73,6 +73,8 @@ void Scene::Draw(){
         modelShader->setMat4("projection", projection);
         modelShader->setMat4("view", view);
 
+
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
         vec3 scale = model.getScale();
         modelMatrix = translate(modelMatrix, model.position); // translate it down so it's at the center of the scene
         modelMatrix = glm::scale(modelMatrix, scale);	// it's a bit too big for our scene, so scale it down
