@@ -17,7 +17,6 @@ set(SOURCES ${ROOT_SOURCE} ${ROOT_HEADER} ${GLAD_SOURCE} ${GLAD_INCLUDE} ${STB_I
 
 add_library(${PROJECT_NAME} ${SOURCES})
 
-
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DGLFW_INCLUDE_NONE)    
 
 if(CMAKE_SYSTEM MATCHES Windows)
@@ -29,11 +28,9 @@ set(ASSIMP_BUILD_TESTS OFF)
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF)
 set(ASSIMP_INSTALL OFF)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
-add_subdirectory(external/assimp)
-add_subdirectory(external/glfw)
-add_subdirectory(external/glm)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/assimp)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/glfw)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/glm)
 
 add_subdirectory(examples)
 

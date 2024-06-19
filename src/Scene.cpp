@@ -41,8 +41,6 @@ Scene::Scene(const char * title, int screenWidth, int screenHeight){
     
     glViewport(0, 0, screenWidth, screenHeight);
 
-    glEnable(GL_DEPTH_TEST);
-
     mouse = new Mouse(window);
     camera = new Camera(mouse);
 }
