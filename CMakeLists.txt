@@ -13,9 +13,9 @@ set(STB_SOURCE ${INCLUDE_FOLDER}/stb_image/stb_image.cpp)
 
 project(Sintese VERSION 1.0.1 DESCRIPTION "Código para carregar um modelo destinado ao EP de computação gráfica")
 
-set(SOURCES ${ROOT_SOURCE} ${ROOT_HEADER} ${GLAD_SOURCE} ${GLAD_INCLUDE} ${STB_INCLUDE} ${STB_SOURCE} src/main.cpp)
+set(SOURCES ${ROOT_SOURCE} ${ROOT_HEADER} ${GLAD_SOURCE} ${GLAD_INCLUDE} ${STB_INCLUDE} ${STB_SOURCE})
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(${PROJECT_NAME} ${SOURCES})
 
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DGLFW_INCLUDE_NONE)    
@@ -35,12 +35,15 @@ add_subdirectory(external/assimp)
 add_subdirectory(external/glfw)
 add_subdirectory(external/glm)
 
+add_subdirectory(examples)
+
 find_package(OpenGL REQUIRED)
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${INCLUDE_FOLDER}" "${INCLUDE_FOLDER}/assimp/include" "${INCLUDE_FOLDER}/glm" "${INCLUDE_FOLDER}/glad/include" "${INCLUDE_FOLDER}/glfw/include")
+target_include_directories(${PROJECT_NAME} PUBLIC "${INCLUDE_FOLDER}" "${INCLUDE_FOLDER}/assimp/include" "${INCLUDE_FOLDER}/glm" "${INCLUDE_FOLDER}/glad/include" "${INCLUDE_FOLDER}/glfw/include")
 
 target_link_libraries(${PROJECT_NAME} glfw glm assimp OpenGL::GL ${CMAKE_DL_LIBS})
 
 file(COPY src/Shaders DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 #add_subdirectory(tests)
