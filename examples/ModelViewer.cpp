@@ -76,9 +76,9 @@ int main(int argc, char **argv)
 
     LightManager lightManager;
 
-    modelViewer.addLight(glm::vec3(5.f,5.f,5.f), glm::vec3(0.f,0.f,1.f));
-    modelViewer.addLight(glm::vec3(-5.f,5.f,-5.f), glm::vec3(1.f,0.f,0.f));
-    modelViewer.addLight(glm::vec3(0.f,5.f,5.f), glm::vec3(1.f,1.f,1.f));
+    //modelViewer.addLight(glm::vec3(5.f,5.f,5.f), glm::vec3(0.f,0.f,1.f));
+    //modelViewer.addLight(glm::vec3(-5.f,5.f,-5.f), glm::vec3(1.f,0.f,0.f));
+    modelViewer.addLight(glm::vec3(0.f,5.f,5.f), glm::vec3(1.f,.7f,0.f));
     modelViewer.setAmbientLight(glm::vec3(1.0f,1.0f,1.0f));
 
     modelViewer.addBackground("assets/forest-skyboxes/MountainPath");
