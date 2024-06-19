@@ -1,5 +1,5 @@
 #pragma once
-#include <glfw/include/GLFW/glfw3.h>
+#include <GLFW/glfw3.h>
 
 //TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
 class Mouse{

@@ -8,7 +8,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 bool Scene::gladLoaded = false;
 bool Scene::glfwLoaded = false;
 
-
 Scene::Scene(const char * title, int screenWidth, int screenHeight){
     this->screenWidth = screenWidth;
     this->screenHeight = screenHeight;
@@ -48,6 +47,10 @@ Scene::Scene(const char * title, int screenWidth, int screenHeight){
     camera = new Camera(mouse);
 }
 
+void Scene::addBackground(string folder){
+    skybox = new Skybox(folder);
+}
+
 void Scene::Update(){
     double time = glfwGetTime();
     double deltaTime = time - lastTime;
@@ -61,11 +64,12 @@ void Scene::Draw(){
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    mat4 view = camera->getViewMat();
+
     for(Model model : models){
         Shader * modelShader = model.shader;
         
         modelShader->use();
-        mat4 view = camera->getViewMat();
         modelShader->setMat4("projection", projection);
         modelShader->setMat4("view", view);
 
@@ -92,6 +96,16 @@ void Scene::Draw(){
         modelShader->setVec3("acameraPos", cameraPosition);
 
         model.Draw();
+    }
+
+
+    if(skybox){
+        mat4 skyboxView = glm::mat4(glm::mat3(view));
+        Shader * skyboxShader = skybox->shader;
+        skyboxShader->use();
+        skyboxShader->setMat4("projection", projection);
+        skyboxShader->setMat4("view", skyboxView);
+        skybox->Draw();
     }
 
     glfwSwapBuffers(window);

@@ -3,7 +3,9 @@
 #include "Model.hpp"
 #include "Camera.hpp"
 #include "Light.hpp"
-#include <glm/glm/glm.hpp>
+#include "utils.hpp"
+#include "Skybox.hpp"
+#include <glm/glm.hpp>
 #include <vector>
 #include <string>
 
@@ -37,6 +39,10 @@ class Scene{
         mouse->sensitivity = sensitivity;
     }
 
+    //Espera receber o nome de uma pasta contendo um cubemap com nomes
+    //right.jpg, left.jpg, top.jpg, etc
+    void addBackground(std::string cubeMapFolder);
+
 
     private:
     //Usado para o cálculo do delta t
@@ -52,6 +58,9 @@ class Scene{
 
     //Modelos
     std::vector<Model> models;
+
+    //Skybox
+    Skybox * skybox = nullptr;
 
     //Atributos da janela
     GLFWwindow * window;
