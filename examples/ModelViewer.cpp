@@ -93,10 +93,14 @@ int main(int argc, char **argv)
 
     string path = getPath(argv[1]);
     Model model(path.c_str(), ModelShader);
+    Model model2(path.c_str(), ModelShader);
+    model2.position = glm::vec3(4.0,0.,0.);
     cout << "SCALE: " <<scale << endl;
     model.Scale(scale);
+    model2.Scale(scale);
 
     modelViewer.addModel(model);
+    modelViewer.addModel(model2);
 
     cout << "Modelo Carregado" << endl;
 
