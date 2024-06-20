@@ -43,6 +43,8 @@ Scene::Scene(const char * title, int screenWidth, int screenHeight){
 
     mouse = new Mouse(window);
     camera = new Camera(mouse);
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Scene::addBackground(string folder){
@@ -71,6 +73,8 @@ void Scene::Draw(){
         modelShader->setMat4("projection", projection);
         modelShader->setMat4("view", view);
 
+
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
         vec3 scale = model.getScale();
         modelMatrix = translate(modelMatrix, model.position); // translate it down so it's at the center of the scene
         modelMatrix = glm::scale(modelMatrix, scale);	// it's a bit too big for our scene, so scale it down
@@ -95,7 +99,6 @@ void Scene::Draw(){
 
         model.Draw();
     }
-
 
     if(skybox){
         mat4 skyboxView = glm::mat4(glm::mat3(view));

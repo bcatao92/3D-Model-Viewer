@@ -5,14 +5,25 @@
 GLuint TextureFromFile(const char* name, std::string directory){
     GLuint textureID;
 
+    std::string nameString(name);
+    std::string strippedName = getFileName(nameString);
+
     //Essa função assume que a textura esteja no diretório do código fonte
-    std::string texturePath (directory + name);
+    std::string texturePath (directory + strippedName);
 
     int height, width, numberOfChannels;
     unsigned char * data = stbi_load(texturePath.c_str(), &width, &height, &numberOfChannels, 0);
 
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D,textureID);
+
+
+    if(!data){
+        std::cout << "Unable to load texture at " << texturePath << std::endl;
+        return textureID;
+    }
+
+    std::cout << "Loaded texture at " << texturePath << std::endl;
 
     //Aceita apenas imagens com 1, 3 ou 4 canais
     GLenum format;
@@ -72,8 +83,10 @@ void Mesh::setupMesh(){
 void Mesh::Draw(Shader * shader){
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
+    unsigned int normalNr = 1;
+    unsigned int heightNr = 1;
+
     shader->use();
-    shader->setFloat("teste", 0.4f);
     for(unsigned int i = 0; i < textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
@@ -84,6 +97,10 @@ void Mesh::Draw(Shader * shader){
             number = std::to_string(diffuseNr++);
         else if(name == "texture_specular")
             number = std::to_string(specularNr++);
+        else if(name == "texture_normal")
+            number = std::to_string(normalNr++); // transfer unsigned int to string
+        else if(name == "texture_height")
+            number = std::to_string(heightNr++); // transfer unsigned int to string
         
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
         shader->setInt((name + number).c_str(), i);
@@ -104,7 +121,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
 {
     std::vector<Texture> textures;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-    {
+    {   
         aiString str;
         mat->GetTexture(type, i, &str);
         std::string textureName = str.C_Str();
@@ -164,6 +181,13 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
         //Repetindo para texturas speculars
         std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+        // 3. normal maps
+        std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+        textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+        // 4. height maps
+        std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+        textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }  
 
     return Mesh(vertices, indices, textures);

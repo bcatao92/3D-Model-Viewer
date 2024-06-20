@@ -15,6 +15,7 @@
 using namespace std;
 
 double mouse_sensitivity = 5000.;
+double scale = 1.0;
 
 bool is_number(const std::string& s)
 {
@@ -28,24 +29,48 @@ bool is_number(const std::string& s)
 }
 
 bool processInput(int argc, char **argv){
+    bool returnVal = false;
     if(argc < 2){
         cout << "Not enough arguments" << endl;
+        cout << "USAGE: Sintese <path-to-model> <model-scale> (optional)<mouse-sensitivity>" << endl;
+        return false;
     }
-    else if(argc == 2)
-        return true;
-    else if(argc == 3){
-        string mouseSensitivity(argv[2]);
-        if(!is_number(mouseSensitivity)){
-            cout << "Mouse sensitivity must be number" << endl;}
+    else if(argc >= 3){
+        string scaleArg(argv[2]);
+        if(argc == 3){
+            if(!is_number(scaleArg)){
+                cout << "Scale must be a number" << endl;
+                return false;
+            }
+            else{
+                scale = atof(argv[2]);
+                return true;
+            }
+        }
         else{
-            mouse_sensitivity = atof(argv[2]);
-            return true;
+            string mouseSensitivity(argv[3]);
+            if(!is_number(scaleArg)){
+                cout << "Scale must be a number" << endl;
+                return false;
+            }
+            else{
+                scale = atof(argv[2]);
+            }
+            if(!is_number(mouseSensitivity)){
+                cout << "Mouse sensitivity must be number" << endl;
+                return false;
+            }
+            else{
+                mouse_sensitivity = atof(argv[3]);
+                return true;
+            }
         }
     }
-    else
+    else{
         cout << "too many arguments" << endl;
-    cout << "USAGE: Sintese <path-to-model> (optional)<mouse-sensitivity>" << endl;
-    return false;
+        cout << "USAGE: Sintese <path-to-model> <model-scale> (optional)<mouse-sensitivity>" << endl;
+        return false;
+    }
 }
 
 int main(int argc, char **argv)
@@ -68,6 +93,9 @@ int main(int argc, char **argv)
 
     string path = getPath(argv[1]);
     Model model(path.c_str(), ModelShader);
+    cout << "SCALE: " <<scale << endl;
+    model.Scale(scale);
+
     modelViewer.addModel(model);
 
     cout << "Modelo Carregado" << endl;
@@ -81,7 +109,7 @@ int main(int argc, char **argv)
     modelViewer.addLight(glm::vec3(0.f,5.f,5.f), glm::vec3(1.f,1.f,1.f));
     modelViewer.setAmbientLight(glm::vec3(1.0f,1.0f,1.0f));
 
-    modelViewer.addBackground("forest-skyboxes/MountainPath");
+    modelViewer.addBackground("assets/forest-skyboxes/MountainPath");
 
     modelViewer.Start();
     return 0;

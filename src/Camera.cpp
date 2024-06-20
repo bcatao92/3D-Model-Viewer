@@ -27,7 +27,8 @@ void Camera::Rotate(double dx, double dy){
     double yangle = getAngle(distance, dy);
 
     yaw += glm::degrees(xangle);
-    pitch += glm::degrees(yangle);
+    if(abs(pitch + glm::degrees(yangle)) <= 90.)
+        pitch += glm::degrees(yangle);
 }
 
 void Camera::processMouseInput(double deltaTime){
@@ -62,6 +63,10 @@ void Camera::Update(double deltaTime){
     //seja espelhado com relação ao eixo x.
     right = glm::normalize(glm::cross(direction, worldUp));
     up = glm::normalize(glm::cross(right,direction));
-    distance += Mouse::scrollOffset*deltaTime*50.;
+    //Através de testes definiu-se que 50 seria um bom valor para a sensibilidade do scroll do mouse
+    double zoom = Mouse::scrollOffset*deltaTime*50.;
+    //Evita que a câmera dê muito zoom e vá parar atrás do modelo
+    if(distance + zoom >= 0.1)
+        distance += zoom;
     processMouseInput(deltaTime);
 }

@@ -73,5 +73,4 @@ class Scene{
 
     //Evitar que seja chamada a função de gerar matriz de projeção a cada frame
     glm::mat4 projection;
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
 };

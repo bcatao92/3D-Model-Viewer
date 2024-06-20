@@ -1,7 +1,6 @@
 #pragma once
 #include <GLFW/glfw3.h>
 
-//TODO: IMPLEMENTAR SENSIBILIDADE DO MOUSE
 class Mouse{
     private:
     double PositionX, PositionY;
